@@ -9,14 +9,10 @@ import (
 	"strings"
 )
 
-/*
-Code for part one.
-TODO: Adapt for part two.
-*/
-
 func main() {
 	linesFromFile := FindNumberOfPossibleGamesInTextFile("../input.txt")
 	fmt.Println(sumAllGames(linesFromFile))
+	fmt.Println(sumOfPowersOfGames(linesFromFile))
 }
 
 func FindNumberOfPossibleGamesInTextFile(pathToTextFile string) []string {
@@ -91,4 +87,49 @@ func colourCountIsGreaterThanMaximum(colourCount string, colour string) bool {
 	}
 
 	return false
+}
+
+func sumOfPowersOfGames(linesIn []string) int {
+	var sumOfPowers = 0
+
+	for _, game := range linesIn {
+		sumOfPowers += getPowerOfGame(game)
+	}
+
+	return sumOfPowers
+}
+
+func getPowerOfGame(gameLine string) int {
+	var minCubes = map[string]int{
+		"red":   -1,
+		"green": -1,
+		"blue":  -1,
+	}
+
+	hands := strings.Split(gameLine[strings.Index(gameLine, ":")+2:], ";")
+
+	for _, hand := range hands {
+		splitHand := strings.Split(hand, ",")
+
+		for _, subHand := range splitHand {
+			countAndColour := strings.Fields(subHand)
+			count, err := strconv.Atoi(countAndColour[0])
+			if err != nil {
+				log.Printf("unable to convert %s into an int", countAndColour[0])
+			}
+
+			if minCubes[countAndColour[1]] == -1 || (count != 0 && minCubes[countAndColour[1]] < count) {
+				minCubes[countAndColour[1]] = count
+			}
+		}
+	}
+
+	negativeMultiplier := 1
+	for _, v := range minCubes {
+		if v == -1 {
+			negativeMultiplier *= -1
+		}
+	}
+
+	return minCubes["red"] * minCubes["green"] * minCubes["blue"] * negativeMultiplier
 }
