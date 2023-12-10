@@ -38,7 +38,7 @@ var numberRunes = []uint8{
 }
 
 func main() {
-	linesFromFile := FindNumberOfPossibleGamesInTextFile("../input.txt")
+	linesFromFile := readInTextFile("../input.txt")
 
 	// inefficient 2n approach - makes two passes
 	// part 1
@@ -53,7 +53,7 @@ func main() {
 	fmt.Println(getSumOfGearNumberProducts(linesFromFile))
 }
 
-func FindNumberOfPossibleGamesInTextFile(pathToTextFile string) []string {
+func readInTextFile(pathToTextFile string) []string {
 	var linesFromFile []string
 
 	file, err := os.Open(pathToTextFile)
