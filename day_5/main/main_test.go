@@ -794,3 +794,136 @@ func TestFindLowestLandValueFromSeedList(t *testing.T) {
 			35, res)
 	}
 }
+
+
+func TestFindLowestLandValueFromSeedRangesList(t *testing.T) {
+	seeds = []int{79, 14, 55, 13}
+
+	seedToSoils = []mappingStruct{
+		{
+			startValue:                     98,
+			numberOfIntegersFollowingStart: 2,
+			ouputValue:                     50,
+		},
+		{
+			startValue:                     50,
+			numberOfIntegersFollowingStart: 48,
+			ouputValue:                     52,
+		},
+	}
+
+	soilToFertilizer = []mappingStruct{
+		{
+			startValue:                     15,
+			numberOfIntegersFollowingStart: 37,
+			ouputValue:                     0,
+		},
+		{
+			startValue:                     52,
+			numberOfIntegersFollowingStart: 2,
+			ouputValue:                     37,
+		},
+		{
+			startValue:                     0,
+			numberOfIntegersFollowingStart: 15,
+			ouputValue:                     39,
+		},
+	}
+	fertilizerToWater = []mappingStruct{
+		{
+			startValue:                     53,
+			numberOfIntegersFollowingStart: 8,
+			ouputValue:                     49,
+		},
+		{
+			startValue:                     11,
+			numberOfIntegersFollowingStart: 42,
+			ouputValue:                     0,
+		},
+		{
+			startValue:                     0,
+			numberOfIntegersFollowingStart: 7,
+			ouputValue:                     42,
+		},
+		{
+			startValue:                     7,
+			numberOfIntegersFollowingStart: 4,
+			ouputValue:                     57,
+		},
+	}
+	waterToLight = []mappingStruct{
+		{
+			startValue:                     18,
+			numberOfIntegersFollowingStart: 7,
+			ouputValue:                     88,
+		},
+		{
+			startValue:                     25,
+			numberOfIntegersFollowingStart: 70,
+			ouputValue:                     18,
+		},
+	}
+	lightToTemperature = []mappingStruct{
+		{
+			startValue:                     77,
+			numberOfIntegersFollowingStart: 23,
+			ouputValue:                     45,
+		},
+		{
+			startValue:                     45,
+			numberOfIntegersFollowingStart: 19,
+			ouputValue:                     81,
+		},
+		{
+			startValue:                     64,
+			numberOfIntegersFollowingStart: 13,
+			ouputValue:                     68,
+		},
+	}
+	temperatureToHumidity = []mappingStruct{
+		{
+			startValue:                     69,
+			numberOfIntegersFollowingStart: 1,
+			ouputValue:                     0,
+		},
+		{
+			startValue:                     0,
+			numberOfIntegersFollowingStart: 69,
+			ouputValue:                     1,
+		},
+	}
+	humidityToLocation = []mappingStruct{
+		{
+			startValue:                     56,
+			numberOfIntegersFollowingStart: 37,
+			ouputValue:                     60,
+		},
+		{
+			startValue:                     93,
+			numberOfIntegersFollowingStart: 4,
+			ouputValue:                     56,
+		},
+	}
+
+	res := findLowestLandValueFromSeedRangesList()
+	if res != 46 {
+		t.Errorf("expected %d from seed range, but got %d",
+			46, res)
+	}
+}
+
+func TestGenerateSeedRanges(t *testing.T) {
+	seeds = []int{79, 14, 55, 13}
+
+	generateSeedRanges()
+
+	if seedRanges[0].startOfSeedNumberRange != 79 || seedRanges[0].endOfSeedNumberRange != 14 {
+		t.Errorf("seed range is incorrect. Expected start: %d and end: %d, but got start: %d and end %d",
+			70, 14, seedRanges[0].startOfSeedNumberRange, seedRanges[0].endOfSeedNumberRange)
+	}
+	if seedRanges[1].startOfSeedNumberRange != 55 || seedRanges[1].endOfSeedNumberRange != 13 {
+		t.Errorf("seed range is incorrect. Expected start: %d and end: %d, but got start: %d and end %d",
+			55, 13, seedRanges[1].startOfSeedNumberRange, seedRanges[1].endOfSeedNumberRange)
+	}
+}
+
