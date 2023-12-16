@@ -9,6 +9,21 @@ import (
 	"strings"
 )
 
+/*
+This is correct, but very slow. Possible efficiencies:
+- Identify the file lines which correspond to the different conversions.
+- Try a different data structure for lookups. It is tempting to use map[int]int. 
+	This would trade memory for speed. Given how slow this runs, that may be for the best.
+- Limit construction of look up tables to seed inputs. As the input is already known, we can 
+	discard any unneeded information at each step, instead of keeping it around for potential 
+ 	later look ups. This will save on memory used to construct the lookup lists, and would 
+  	save on for loop cycles later on (which became legion for the seed range lookups).
+*/
+
+type seedRange struct {
+	startOfSeedNumberRange int
+	endOfSeedNumberRange   int
+}
 type mappingStruct struct {
 	startValue                     int
 	numberOfIntegersFollowingStart int
@@ -16,6 +31,7 @@ type mappingStruct struct {
 }
 
 var seeds []int
+var seedRanges []seedRange
 var seedToSoils []mappingStruct
 var soilToFertilizer []mappingStruct
 var fertilizerToWater []mappingStruct
@@ -28,6 +44,7 @@ func main() {
 	linesFromFile := readInTextFile("../input.txt")
 	fillInLists(linesFromFile)
 	fmt.Println(findLowestLandValueFromSeedList())
+	fmt.Println(findLowestLandValueFromSeedRangesList())
 }
 
 func readInTextFile(pathToTextFile string) []string {
@@ -187,4 +204,39 @@ func findLowestLandValueFromSeedList() int {
 	}
 
 	return lowestLandVal
+}
+
+// Very inefficient.
+func findLowestLandValueFromSeedRangesList() int {
+	lowestLandVal := -1
+
+	generateSeedRanges()
+
+	for _, sR := range seedRanges {
+		for i := sR.startOfSeedNumberRange; i < sR.startOfSeedNumberRange+sR.endOfSeedNumberRange; i++ {
+			soil := lookupMatchingTargetValueFromMappingStruct(i, &seedToSoils)
+			fert := lookupMatchingTargetValueFromMappingStruct(soil, &soilToFertilizer)
+			water := lookupMatchingTargetValueFromMappingStruct(fert, &fertilizerToWater)
+			light := lookupMatchingTargetValueFromMappingStruct(water, &waterToLight)
+			temp := lookupMatchingTargetValueFromMappingStruct(light, &lightToTemperature)
+			humid := lookupMatchingTargetValueFromMappingStruct(temp, &temperatureToHumidity)
+			loc := lookupMatchingTargetValueFromMappingStruct(humid, &humidityToLocation)
+
+			if lowestLandVal == -1 || loc < lowestLandVal {
+				lowestLandVal = loc
+			}
+		}
+	}
+
+	return lowestLandVal
+}
+
+func generateSeedRanges() {
+	for i := 0; i < len(seeds); i++ {
+		seedRanges = append(seedRanges, seedRange{
+			startOfSeedNumberRange: seeds[i],
+			endOfSeedNumberRange:   seeds[i+1],
+		})
+		i++
+	}
 }
